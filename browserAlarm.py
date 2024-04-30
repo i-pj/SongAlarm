@@ -1,3 +1,4 @@
+import schedule
 import time
 import webbrowser
 import random
@@ -13,12 +14,6 @@ def initialize_playlist():
     
     return playlist
 
-def wait_until_alarm(alarm_time):
-    while True:
-        current_time = time.strftime("%H:%M")
-        if current_time == alarm_time:
-            return
-
 def play_random_song(playlist):
     random_song = random.choice(playlist).strip()
     webbrowser.open(random_song)
@@ -28,9 +23,11 @@ def play_random_song(playlist):
 def main():
     playlist = initialize_playlist()
     if playlist is not None:
-        alarm_time = "6:00"
-        wait_until_alarm(alarm_time)
-        play_random_song(playlist)
+        schedule.every().day.at("06:00").do(play_random_song, playlist)  # Schedule the task to run at 6:00 AM every day
+
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
 if __name__ == "__main__":
     main()
